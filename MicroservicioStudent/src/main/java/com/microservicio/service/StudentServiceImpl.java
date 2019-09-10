@@ -7,10 +7,10 @@ import com.microservicio.model.Student;
 import com.microservicio.repository.StudentRepository;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class StudentServiceImpl implements StudentService{
-	
 	
 	@Autowired
 	private StudentRepository resp;
@@ -22,9 +22,9 @@ public class StudentServiceImpl implements StudentService{
 	}
 
 	@Override
-	public Flux<Student> findAllForNumeroIdentificacion() {
+	public Mono<Student> save(Student student) {
 	
-		return null;
+		return resp.save(student);
 	}
-
+	
 }

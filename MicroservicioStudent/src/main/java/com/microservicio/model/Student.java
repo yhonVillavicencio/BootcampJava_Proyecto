@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
+@Setter //lombok
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection="Student")

@@ -3,12 +3,14 @@ package com.microservicio.service;
 import com.microservicio.model.Student;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface StudentService {
 	
 	
 	public Flux<Student> findAll();
 	
-	public Flux<Student> findAllForNumeroIdentificacion();
+	
+	public Mono<Student> save(Student student);
 	
 }
