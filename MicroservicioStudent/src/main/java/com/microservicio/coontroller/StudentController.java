@@ -1,24 +1,21 @@
 package com.microservicio.coontroller;
 
 import java.net.URI;
-import java.security.Provider.Service;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.Valid;
-import javax.xml.ws.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.support.WebExchangeBindException;
+
 
 import com.microservicio.model.Student;
 import com.microservicio.service.StudentService;
@@ -39,48 +36,46 @@ public class StudentController {
 				ResponseEntity.ok()
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.body(servicio.findAll())
-				);
-		
+				);	
 	}
 	
 	@PostMapping
-	public Mono<ResponseEntity<Map<String, Object>>> crear(@Valid @RequestBody Mono<Student> monoStudent){
+	public Mono<ResponseEntity<Student>> crear(@RequestBody Student student){
 		
-		Map<String, Object> respuesta = new HashMap<String, Object>();
+		if(student.getFechaNacimiento()==null) {
+			student.setFechaNacimiento(new Date());
+		}
 		
-		return monoStudent.flatMap(student -> {
-			if(student.getFechaNacimiento()==null) {
-				student.setFechaNacimiento(new Date());
-			}
-			
-			return servicio.save(student).map(p-> {
-				respuesta.put("student", p);
-				respuesta.put("mensaje", "Estudiante creado con éxito");
-				respuesta.put("timestamp", new Date());
-				return ResponseEntity
-					.created(URI.create("/api/student/".concat(p.getCodigoStudent())))
-					.contentType(MediaType.APPLICATION_JSON_UTF8)
-					.body(respuesta);
-				});
-			
-		}).onErrorResume(t -> {
-			return Mono.just(t).cast(WebExchangeBindException.class)
-					.flatMap(e -> Mono.just(e.getFieldErrors()))
-					.flatMapMany(Flux::fromIterable)
-					.map(fieldError -> "El campo "+fieldError.getField() + " " + fieldError.getDefaultMessage())
-					.collectList()
-					.flatMap(list -> {
-						respuesta.put("errors", list);
-						respuesta.put("timestamp", new Date());
-						respuesta.put("status", HttpStatus.BAD_REQUEST.value());
-						return Mono.just(ResponseEntity.badRequest().body(respuesta));
-					});
-							
-		});
-		
-
+		return servicio.save(student).map(s-> ResponseEntity
+				.created(URI.create("/api/student/".concat(s.getCodigoStudent())))
+				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.body(s)
+				);
 	}
-		
+	
+	@PutMapping("/{id}")
+	public Mono<ResponseEntity<Student>> editar(@RequestBody Student student, @PathVariable String id){
+		return servicio.findById(id).flatMap(s -> {
+			s.setTipoIdentificacion(student.getTipoIdentificacion());
+			s.setNumeroIdentificacion(student.getNumeroIdentificacion());
+			s.setFechaNacimiento(student.getFechaNacimiento());
+			s.setGenero(student.getGenero());
+			s.setNumeroPadres(student.getNumeroPadres());
+			
+			return servicio.save(s);
+		}).map(s->ResponseEntity.created(URI.create("/api/students/".concat(s.getCodigoStudent())))
+				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.body(s))
+		.defaultIfEmpty(ResponseEntity.notFound().build());
+	}
+	
+	@DeleteMapping("/{id}")
+	public Mono<ResponseEntity<Void>> eliminar(@PathVariable String id){
+		return servicio.findById(id).flatMap(s ->{
+			return servicio.delete(s).then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
+		}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
+	}
+
 
 }
 

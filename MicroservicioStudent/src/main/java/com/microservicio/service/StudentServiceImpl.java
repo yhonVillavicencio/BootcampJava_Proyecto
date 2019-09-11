@@ -26,5 +26,19 @@ public class StudentServiceImpl implements StudentService{
 	
 		return resp.save(student);
 	}
+
+	@Override
+	public Mono<Student> findById(String id) {
+	
+		return resp.findById(id);
+	}
+
+	@Override
+	public Mono<Void> delete(Student student) {
+		
+		return resp.delete(student);
+	}
+
+
 	
 }
