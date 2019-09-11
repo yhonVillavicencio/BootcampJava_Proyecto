@@ -53,6 +53,14 @@ public class StudentController {
 				);
 	}
 	
+	@GetMapping("/{id}")
+	public Mono<ResponseEntity<Student>> ver(@PathVariable String id){
+		return servicio.findById(id).map(s -> ResponseEntity.ok()
+				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.body(s))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
+	}
+	
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<Student>> editar(@RequestBody Student student, @PathVariable String id){
 		return servicio.findById(id).flatMap(s -> {
@@ -63,7 +71,7 @@ public class StudentController {
 			s.setNumeroPadres(student.getNumeroPadres());
 			
 			return servicio.save(s);
-		}).map(s->ResponseEntity.created(URI.create("/api/students/".concat(s.getCodigoStudent())))
+		}).map(s->ResponseEntity.created(URI.create("/api/student/".concat(s.getCodigoStudent())))
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.body(s))
 		.defaultIfEmpty(ResponseEntity.notFound().build());
@@ -76,6 +84,10 @@ public class StudentController {
 		}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
 	}
 
+	
+	
+	
+	
 
 }
 
