@@ -1,7 +1,6 @@
 package com.microservicio.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.microservicio.model.Student;
@@ -52,7 +51,5 @@ public class StudentServiceImpl implements StudentService{
 		return resp.findBynombre(nombre);
 	}
 
-	
-   
 	
 }

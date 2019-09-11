@@ -1,10 +1,7 @@
 package com.microservicio.model;
 
-import java.util.Date;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,21 +9,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter //lombok
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection="Student")
-public class Student {
+@Document(collection = "FamilyMembers")
+public class FamilyMembers {
 	
 	@Id
-	private String codigoStudent;
+	private String codigoDelFamiliar;
 	private String tipoIdentificacion;
 	private String numeroIdentificacion;
 	private String nombre;
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date fechaNacimiento;
+	private String codigoStudent;
 	private String genero;
-	private int numeroPadres;
+	private String tipoFamiliar;
 	
 
 }
