@@ -18,8 +18,8 @@ import org.slf4j.Logger;
 @SpringBootApplication
 public class MicroservicioStudentApplication {
 	
-	@Autowired
-	private StudentService servicio;
+	//@Autowired
+	//private StudentService servicio;
 	
 	/*@Autowired
 	private ReactiveMongoTemplate mongoTemplate;	

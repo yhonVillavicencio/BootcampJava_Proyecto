@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import com.microservicio.model.Student;
+import com.microservicio.repository.StudentRepository;
 import com.microservicio.service.StudentService;
 
 import reactor.core.publisher.Flux;
@@ -27,9 +28,11 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/student") // asignar una ruta principal
 public class StudentController {
 	
-	@Autowired
-	private StudentService servicio;
+	//@Autowired
+	//private StudentService servicio;
 	
+	@Autowired
+	private StudentRepository servicio;
 	@GetMapping
 	public Mono<ResponseEntity<Flux<Student>>> lista(){
 		return Mono.just(
@@ -53,19 +56,35 @@ public class StudentController {
 				);
 	}
 	
-	@GetMapping("/{id}")
-	public Mono<ResponseEntity<Student>> ver(@PathVariable String id){
-		return servicio.findById(id).map(s -> ResponseEntity.ok()
-				.contentType(MediaType.APPLICATION_JSON_UTF8)
-				.body(s))
-				.defaultIfEmpty(ResponseEntity.notFound().build());
+
+	//buscar por numero de identificacion
+	@GetMapping("dni/{numeroIdentificacion}")
+	public Mono<Student> dni(@PathVariable("numeroIdentificacion") String numeroIdentificacion){
+		return servicio.findBynumeroIdentificacion(numeroIdentificacion);
 	}
+	
+	//buscar por numero de nombre
+	@GetMapping("nombre/{nombre}")
+	public Flux<Student> name(@PathVariable("nombre") String nombre){
+		return servicio.findBynombre(nombre);
+	}
+	
+	///buscar por id
+
+		@GetMapping("/{id}")
+		public Mono<ResponseEntity<Student>> ver(@PathVariable String id){
+		return servicio.findById(id).map(s -> ResponseEntity.ok()
+		.contentType(MediaType.APPLICATION_JSON_UTF8)
+		.body(s))
+		.defaultIfEmpty(ResponseEntity.notFound().build());
+		}
 	
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<Student>> editar(@RequestBody Student student, @PathVariable String id){
 		return servicio.findById(id).flatMap(s -> {
 			s.setTipoIdentificacion(student.getTipoIdentificacion());
 			s.setNumeroIdentificacion(student.getNumeroIdentificacion());
+			s.setNombre(student.getNombre());
 			s.setFechaNacimiento(student.getFechaNacimiento());
 			s.setGenero(student.getGenero());
 			s.setNumeroPadres(student.getNumeroPadres());
@@ -84,11 +103,13 @@ public class StudentController {
 		}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
 	}
 
-	
-	
-	
-	
+	////////////////////////////////////////////////////
 
+	
+	
+	
+	
+	
 }
 
 

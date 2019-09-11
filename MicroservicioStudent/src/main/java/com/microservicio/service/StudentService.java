@@ -15,4 +15,7 @@ public interface StudentService {
 	
 	public Mono<Void> delete(Student student);
 	
+	public Mono<Student> findBynumeroIdentificacion(String numeroIdentificacion);
+	
+	public Flux<Student> findBynombre(String nombre);
 }

@@ -1,6 +1,7 @@
 package com.microservicio.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.microservicio.model.Student;
@@ -39,6 +40,19 @@ public class StudentServiceImpl implements StudentService{
 		return resp.delete(student);
 	}
 
+	@Override
+	public Mono<Student> findBynumeroIdentificacion(String numeroIdentificacion) {
+		
+		return resp.findBynumeroIdentificacion(numeroIdentificacion);
+	}
 
+	@Override
+	public Flux<Student> findBynombre(String nombre) {
+
+		return resp.findBynombre(nombre);
+	}
+
+	
+   
 	
 }
